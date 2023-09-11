@@ -54,6 +54,7 @@ def generate_simple_cubic(
     -------
     atomic_positions (np.ndarray) : 3-dim array cointaining the atomic positions
     """
+    n += 1  # needed to evaluate each vertex
     atomic_positions = []
     for i in range(n):
         for j in range(n):
@@ -79,14 +80,20 @@ def generate_body_centered_cubic(
     -------
     atomic_positions (np.array) : 3-dim array cointaining the atomic positions
     """
+    m = n + 1  # needed to evaluate each vertex
     atomic_positions = []
+    for i in range(m):
+        for j in range(m):
+            for k in range(m):
+                atomic_positions.append([i * a, j * a, k * a])
+                
+  
     for i in range(n):
         for j in range(n):
             for k in range(n):
-                atomic_positions.append([i * a, j * a, k * a])
-    atomic_positions = np.array(atomic_positions)
-    offset = a / 2
-    atomic_positions += [offset, offset, offset]
+                # evaluation of the position of the central atom
+                atomic_positions.append( [(i+1) * (a/2+i), (j+1) * (a/2+j), (k+1) * (a/2+k)])
+    
     return atomic_positions
 
 # Create a 3D grid of atoms for the face-centered cubic structure
