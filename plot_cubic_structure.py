@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.figure
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import configparser
@@ -12,7 +13,7 @@ element_symbol = config.get('element', 'symbol')
 
 # Extract lattice parameter a from configuration
 a_string = config.get('lattice_parameter', 'a')
-a = np.float(a_string)
+a = float(a_string)
 
 # Extract cubic structure
 cubic_structure = config.get('cubic_structure', 'type').lower()
@@ -22,7 +23,25 @@ cubic_positions = np.loadtxt('cubic_structure_positions.txt')
 cubic_positions /= a # renormalize the cubic structure to the lattice parameter 
 
 # Plot a cubic structure
-def plot_cubic_structure(atomic_positions, title):
+def plot_cubic_structure(
+                    atomic_positions : np.ndarray,
+                    title : str = " "
+) -> matplotlib.figure.Figure:
+    """
+    Notes
+    -----
+    This function plots the crystal structure based on the given atomic positions 
+
+    Parameters
+    ----------
+    atomic_positions (np.ndarray) : 3-dim array containing the atomic positions
+    title (str) : title of the plot
+
+    Returns
+    -------
+    fig (matplotlib.figure.Figure): figure containing the plot
+
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(atomic_positions[:, 0], atomic_positions[:, 1], atomic_positions[:, 2], c='r', marker='o', s=100)
@@ -34,6 +53,7 @@ def plot_cubic_structure(atomic_positions, title):
     ax.set_zlim(0, np.max(atomic_positions[:, 2]))
     plt.title(title)
     plt.show()
+    return fig
 
 # Add the element symbol to the plot title
 plot_title = f'{element_symbol} {cubic_structure} lattice with a = {a} Å'
