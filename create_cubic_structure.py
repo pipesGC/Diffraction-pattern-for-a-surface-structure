@@ -114,13 +114,26 @@ def generate_face_centered_cubic(
     atomic_positions (np.ndarray) : 3-dim array cointaining the atomic positions
     """
     atomic_positions = []
-    for i in range(n):
+    for i in range(n+1):
+        for j in range(n+1):
+            for k in range(n+1):
+                atomic_positions.append([i * a, j * a, k * a])
+
+    for i in range(n+1):
         for j in range(n):
             for k in range(n):
-                atomic_positions.append([i * a, j * a, k * a])
-                atomic_positions.append([i * a + a/2, j * a + a/2, k * a])
-                atomic_positions.append([i * a + a/2, j * a, k * a + a/2])
                 atomic_positions.append([i * a, j * a + a/2, k * a + a/2])
+
+    for i in range(n):
+        for j in range(n+1):
+            for k in range(n):
+                atomic_positions.append([i * a + a/2, j * a, k * a + a/2])
+
+    for i in range(n):
+        for j in range(n):
+            for k in range(n+1):
+                atomic_positions.append([i * a + a/2, j * a + a/2, k * a])
+                
     atomic_positions = np.array(atomic_positions)
     return atomic_positions
 
