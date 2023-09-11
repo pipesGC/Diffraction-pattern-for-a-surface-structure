@@ -114,21 +114,26 @@ def generate_face_centered_cubic(
     atomic_positions (np.ndarray) : 3-dim array cointaining the atomic positions
     """
     atomic_positions = []
+
+    # Evaluation of the atoms at the verteces
     for i in range(n+1):
         for j in range(n+1):
             for k in range(n+1):
                 atomic_positions.append([i * a, j * a, k * a])
 
+    # Evaluation of the face centeres atoms along the x direction
     for i in range(n+1):
         for j in range(n):
             for k in range(n):
                 atomic_positions.append([i * a, j * a + a/2, k * a + a/2])
 
+    # Evaluation of the face centeres atoms along the y direction
     for i in range(n):
         for j in range(n+1):
             for k in range(n):
                 atomic_positions.append([i * a + a/2, j * a, k * a + a/2])
 
+    # Evaluation of the face centeres atoms along the z direction
     for i in range(n):
         for j in range(n):
             for k in range(n+1):
