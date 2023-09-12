@@ -16,6 +16,10 @@ Nz = int(Nz_string)
 a_string = config.get('lattice_parameter', 'a')
 a = float(a_string)
 
+# Check for a specific error condition and raise an exception if met
+if Nx == 0 or Ny == 0 or Nz == 0:
+    raise ValueError("Error: At least one of Nx, Ny, or Nz is equal to zero.")
+
 # Create a 3D grid of atoms for the specified cubic structure
 def generate_cubic_structure(
                         structure : str,
@@ -26,7 +30,7 @@ def generate_cubic_structure(
     """
     Notes
     -----
-    This function calls the right function to generate the cubic structure specified in config
+    This function calls the right function to generate and return the cubic structure specified in config
 
     Parameters
     ----------
@@ -36,6 +40,7 @@ def generate_cubic_structure(
     Nz (int) : number of repetitions of the structure to display the z axis
 
     """
+
     if structure == "sc":
         return generate_simple_cubic(Nx, Ny, Nz)
     elif structure == "bcc":
@@ -44,6 +49,8 @@ def generate_cubic_structure(
         return generate_face_centered_cubic(Nx, Ny, Nz)
     else:
         raise ValueError("Invalid cubic_structure specified in config.ini")
+
+
 
 # Create a 3D grid of atoms for the simple cubic structure
 def generate_simple_cubic(
@@ -66,6 +73,7 @@ def generate_simple_cubic(
     -------
     atomic_positions (np.ndarray) : 3-dim array cointaining the atomic positions
     """
+
     atomic_positions = []
     for i in range(Nx + 1):
         for j in range(Ny + 1):
@@ -73,6 +81,7 @@ def generate_simple_cubic(
                 atomic_positions.append([i * a, j * a, k * a])
     atomic_positions = np.array(atomic_positions)
     return atomic_positions
+
 
 # Create a 3D grid of atoms for the body-centered cubic structure
 def generate_body_centered_cubic(
