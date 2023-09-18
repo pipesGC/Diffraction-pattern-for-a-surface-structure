@@ -15,6 +15,7 @@ Ny = int(Ny_string)
 Nz = int(Nz_string)
 a_string = config.get('lattice_parameter', 'a')
 a = float(a_string)
+element_symbol = config.get('element', 'symbol')
 
 # Check for a specific error condition and raise an exception if met
 if Nx == 0 or Ny == 0 or Nz == 0:
@@ -168,8 +169,12 @@ def generate_face_centered_cubic(
     atomic_positions = np.array(atomic_positions)
     return atomic_positions
 
-# Generate the specified cubic structure
-cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
+def save_atomic_coordinates(cubic_positions):    
+    # Generate the filename based on the configuration parameters
+    filename = f'{element_symbol}_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
 
-# Save the atomic positions to a file for further use (e.g., visualization)
-np.savetxt('cubic_structure_positions.txt', cubic_positions)
+    # Save the atomic positions to the generated filename
+    np.savetxt(filename, cubic_positions)
+
+cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
+save_atomic_coordinates(cubic_positions)
