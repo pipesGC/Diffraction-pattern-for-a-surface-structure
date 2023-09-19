@@ -27,11 +27,12 @@ Ny = int(Ny_string)
 Nz = int(Nz_string)
 
 # Check if the 'cubic_structure_positions.txt' file exists
-if not os.path.isfile('cubic_structure_positions.txt'):
-    raise FileNotFoundError("Error: 'cubic_structure_positions.txt' file not found. Run create_cubic_structure.py first.")
+filename = f'{element_symbol}_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
+if not os.path.isfile(filename):
+    raise FileNotFoundError(f"Error: '{filename}' file not found. Run create_cubic_structure.py first.")
 
 # Read atomic positions from the file
-cubic_positions = np.loadtxt('cubic_structure_positions.txt')
+cubic_positions = np.loadtxt(filename)
 cubic_positions /= a  # renormalize the cubic structure to the lattice parameter
 
 # Initialize variables to store selected atom indices and their colors
@@ -97,10 +98,9 @@ def save_cubic_structure_plot(filename: str):
     # Save the plot as an image file
     plt.savefig(filename)
 
-# Call the functions
-save_cubic_structure_plot('cubic_structure_plot.png')
+
 
 # Call the functions
 plot_cubic_structure()
-filename = f'{element_symbol}_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}'
-save_cubic_structure_plot(filename)
+# plotname = f'{element_symbol}_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.png'
+# save_cubic_structure_plot(plotname)
