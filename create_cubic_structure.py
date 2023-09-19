@@ -112,11 +112,11 @@ def generate_body_centered_cubic(
                 atomic_positions.append([i * a, j * a, k * a])
                 
   
-    for i in range(Nx + 1):
-        for j in range(Ny + 1):
-            for k in range(Nz + 1):
+    for i in range(Nx ):
+        for j in range(Ny):
+            for k in range(Nz):
                 # evaluation of the position of the central atom
-                atomic_positions.append( [(i+1) * (a/2+i), (j+1) * (a/2+j), (k+1) * (a/2+k)])
+                atomic_positions.append( [(i+0.5) * a, (j+0.5) * a, (k+0.5) * a])
     
     return atomic_positions
 
