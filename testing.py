@@ -45,3 +45,16 @@ def test_count_atoms_sc(Nx, Ny, Nz):
     # Check if the number of coordinates matches the expected count
     
     assert len(atomic_positions) == expected_count 
+
+# Test the generate_face_centered_cubic function
+@given(Nx=st.integers(min_value=1, max_value=20), Ny=st.integers(min_value=1, max_value=20), Nz=st.integers(min_value=1, max_value=20))
+def test_count_atoms_fcc(Nx, Ny, Nz):
+    # Generate atomic positions for fcc
+    atomic_positions = generate_face_centered_cubic(Nx, Ny, Nz)
+
+    # Calculate the expected number of atomic coordinates for FCC
+    expected_count = (Nx + 1)*(Ny + 1)*(Nz + 1) + (Nx +1)*Ny*Nz + Nx*(Ny + 1)*Nz + Nx*Ny*(Nz + 1)
+
+    # Check if the number of the coordinates matches the expected count
+    assert len(atomic_positions) == expected_count
+
