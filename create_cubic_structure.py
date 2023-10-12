@@ -79,8 +79,8 @@ def generate_surface_structure(
     Na (int) : number of repetitions of the structure to display along 'a'
     Nb (int) : number of repetitions of the structure to display along 'b'
     """
-    if structure == "sc":
-        pass
+    if structure == "sc" and plane == '111':
+        return generate_111_surface_sc(Na, Nb)
     elif structure == "bcc":
         pass
     elif structure == "fcc" and plane == '111':
@@ -207,6 +207,22 @@ def generate_face_centered_cubic(
     atomic_positions = np.array(atomic_positions)
     return atomic_positions
 
+def generate_111_surface_sc(
+                          Na : int,
+                          Nb : int
+) -> np.ndarray:
+    atomic_positions = []
+    a_111 = a*np.sqrt(2)         # lattice parameter for the (111) surface 
+
+    for j in range(Nb+1):
+        for i in range(Na+1):
+            atomic_positions.append([i * a_111, j * a_111])
+
+    atomic_positions = np.array(atomic_positions)
+    
+    return atomic_positions
+    
+
 def generate_111_surface_fcc(
                           Na : int,
                           Nb : int
@@ -232,6 +248,8 @@ def generate_111_surface_fcc(
     for j in range(Nb+1):
         for i in range(Na+1):
             atomic_positions.append([i  + j * np.cos(angle), j * np.sin(angle)])
+
+    atomic_positions = atomic_positions*a_111
 
     atomic_positions = np.array(atomic_positions)
     
@@ -269,7 +287,7 @@ def save_atomic_coordinates(
 
 
 cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
-# save_atomic_coordinates(cubic_positions)
+save_atomic_coordinates(cubic_positions)
 
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 save_atomic_coordinates(surface_positions, is_surface = True)
