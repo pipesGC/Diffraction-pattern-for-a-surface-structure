@@ -211,6 +211,21 @@ def generate_111_surface_sc(
                           Na : int,
                           Nb : int
 ) -> np.ndarray:
+    """
+    Notes
+    -----
+    This function calculates the atomic positions of the (111) surface of a simple cubic structure
+
+    Parameters
+    ----------
+    Na (int) : number of repetitions of the structure to display the a axis 
+    Nb (int) : number of repetitions of the structure to display the b axis
+
+    Returns
+    -------
+    atomic_positions (np.ndarray) : 2-dim array cointaining the atomic positions
+
+    """
     atomic_positions = []
     a_111 = a*np.sqrt(2)         # lattice parameter for the (111) surface 
 
@@ -222,6 +237,26 @@ def generate_111_surface_sc(
     
     return atomic_positions
     
+def generate_111_surface_bcc(
+                          Na : int,
+                          Nb : int
+) -> np.ndarray:
+    """
+    Notes
+    -----
+    This function calculates the atomic positions of the (111) surface of a body centered cubic structure
+
+    Parameters
+    ----------
+    Na (int) : number of repetitions of the structure to display the a axis 
+    Nb (int) : number of repetitions of the structure to display the b axis
+
+    Returns
+    -------
+    atomic_positions (np.ndarray) : 2-dim array cointaining the atomic positions
+
+    """
+    pass
 
 def generate_111_surface_fcc(
                           Na : int,
@@ -256,6 +291,23 @@ def generate_111_surface_fcc(
     return atomic_positions
 
 
+def calculate_lattice_center(positions):
+    """
+    Calculate the center of a surface lattice from a list of atomic positions.
+
+    Parameters
+    ----------
+    positions (list of lists): surface tomic positions, where each position is a list of [x, y] coordinates.
+
+    Returns
+    -------
+    center (list): [x, y] coordinates of the lattice center.
+    """
+    # Calculate the average position of all atoms
+    center = np.mean(positions, axis=0)
+    return center
+
+
 
 def save_atomic_coordinates(
                         coordinates : np.ndarray,
@@ -274,6 +326,7 @@ def save_atomic_coordinates(
     if is_surface: 
         # Generate the filename for the surface
         filename = f'{element_symbol}({plane})_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
+        print("Tirana brucia")
 
     else: 
         # Generate the filename based on the configuration parameters
@@ -281,8 +334,6 @@ def save_atomic_coordinates(
 
     # Save the atomic positions to the generated filename
     np.savetxt(filename, coordinates)
-
-    
 
 
 
