@@ -291,22 +291,49 @@ def generate_111_surface_fcc(
     return atomic_positions
 
 
-def calculate_lattice_center(positions):
+def calculate_lattice_center(
+                            atomic_positions : np.ndarray
+) -> np.ndarray:
     """
     Calculate the center of a surface lattice from a list of atomic positions.
 
     Parameters
     ----------
-    positions (list of lists): surface tomic positions, where each position is a list of [x, y] coordinates.
+    positions (np.ndarray): atomic positions, where each position is a list of the coordinates.
 
     Returns
     -------
-    center (list): [x, y] coordinates of the lattice center.
+    center (np.ndarray): coordinates of the lattice center.
     """
     # Calculate the average position of all atoms
-    center = np.mean(positions, axis=0)
+    center = np.mean(atomic_positions, axis=0)
     return center
 
+def shift_surface_coordinates(
+                            atomic_positions : np.ndarray,
+                            dimension : int = 2
+) -> np.ndarray:
+    """
+    Shift the surface atomic coordinates based on the (surface) lattice center.
+
+    Parameters
+    ----------
+    atomic_positions (np.ndarray): Atomic positions of the surface.
+    dimension (int): dimension of the space (either 2D or 3D)
+
+    Returns
+    -------
+    shifted_positions (np.ndarray): Shifted atomic positions.
+    """
+    center = calculate_lattice_center(atomic_positions)
+
+    if dimension == 2:    
+        shifted_positions = [[pos[0] - center[0], pos[1] - center[1]] for pos in atomic_positions]
+        
+    else:
+        shifted_positions = [[pos[0] - center[0], pos[1] - center[1], pos[2] - center[2]] for pos in atomic_positions]
+
+    return shifted_positions
 
 
 def save_atomic_coordinates(
