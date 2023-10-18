@@ -409,6 +409,38 @@ def check_2fold_rotation_axis(
     return True
 
 
+def check_centered_unit_cell_symmetry(
+                                    atomic_coordinates : np.ndarray, 
+                                    decimal_places : int = 3
+) -> bool:
+    """
+    Notes
+    -----
+    Check for centered unit cell symmetry in a set of atomic coordinates.
+
+    Parameters
+    ----------
+    atomic_coordinates (np.ndarray): Array containing atomic coordinates where each row is (x, y).
+    decimal_places (int): Number of decimal places to consider for coordinates comparison.
+
+    Returns
+    -------
+    has_symmetry (bool): True if centered unit cell symmetry is detected, False otherwise.
+    """
+    # Convert the atomic coordinates to a set for efficient searching
+    coordinates_set = set(tuple(np.round(coord, decimal_places)) for coord in atomic_coordinates)
+
+    # Check each atom for the existence of a centered unit cell image
+    for atom in atomic_coordinates:
+        x, y = atom
+        centered_atom = (x + 0.5, y + 0.5)      
+
+        if tuple(np.round(centered_atom, decimal_places)) not in coordinates_set:
+            return False
+
+    return True
+
+
 def save_atomic_coordinates(
                         coordinates : np.ndarray,
                         is_surface : bool = False
@@ -442,19 +474,12 @@ cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
 
-# mirror symmetry
-has_symmetry = check_mirror_plane_symmetry(surface_positions_shifted)
+# centered unit cell
+has_symmetry = check_centered_unit_cell_symmetry(surface_positions_shifted, decimal_places=3)
 if has_symmetry:
-    print("The set of atomic coordinates has mirror plane symmetry.")
+    print("The set of atomic coordinates has a centered unit cell symmetry.")
 else:
-    print("The set of atomic coordinates does not have mirror plane symmetry.")
-
-# 2-fold rotation axis
-has_symmetry = check_2fold_rotation_axis(surface_positions_shifted, decimal_places=3)
-if has_symmetry:
-    print("The set of atomic coordinates has a 2-fold rotation axis symmetry.")
-else:
-    print("The set of atomic coordinates does not have a 2-fold rotation axis symmetry.")
+    print("The set of atomic coordinates does not have a centered unit cell symmetry.")
 
 # save_atomic_coordinates(surface_positions_shifted, is_surface = True)
 # atomic_positions_111 = generate_111_surface_fcc(3,2)
