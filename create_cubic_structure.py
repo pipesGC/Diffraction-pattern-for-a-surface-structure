@@ -336,6 +336,39 @@ def shift_surface_coordinates(
 
     return shifted_positions
 
+def check_mirror_plane_symmetry(
+                            atomic_coordinates : np.ndarray
+) -> bool:
+    """
+    Check for mirror plane symmetry in a set of atomic coordinates.
+
+    Parameters
+    ----------
+    atomic_coordinates (np.ndarray): Array containing atomic coordinates where each row is (x, y).
+
+    Returns
+    -------
+    has_symmetry (bool): True if mirror plane symmetry is detected, False otherwise.
+    """
+    # Convert the atomic coordinates to a set for efficient searching
+    coordinates_set = set(map(tuple, atomic_coordinates))
+
+    # Check each atom for mirror image existence
+    for atom in atomic_coordinates:
+        x, y = atom
+        mirror_atom_x = (-x, y)
+        mirror_atom_y = (x, -y)
+        mirror_atom_xy = (-x, -y)
+
+        if (
+            tuple(mirror_atom_x) not in coordinates_set and
+            tuple(mirror_atom_y) not in coordinates_set and
+            tuple(mirror_atom_xy) not in coordinates_set
+        ):
+            return False
+
+    return True
+
 
 def save_atomic_coordinates(
                         coordinates : np.ndarray,
@@ -365,11 +398,18 @@ def save_atomic_coordinates(
 
 
 cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
-save_atomic_coordinates(cubic_positions)
+# save_atomic_coordinates(cubic_positions)
 
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
-save_atomic_coordinates(surface_positions_shifted, is_surface = True)
+
+has_symmetry = check_mirror_plane_symmetry(surface_positions_shifted)
+if has_symmetry:
+    print("The set of atomic coordinates has mirror plane symmetry.")
+else:
+    print("The set of atomic coordinates does not have mirror plane symmetry.")
+
+# save_atomic_coordinates(surface_positions_shifted, is_surface = True)
 # atomic_positions_111 = generate_111_surface_fcc(3,2)
 # x,y = zip(*atomic_positions_111)
 # plt.scatter(x, y)
