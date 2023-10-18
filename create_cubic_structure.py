@@ -284,9 +284,10 @@ def generate_111_surface_fcc(
         for i in range(Na+1):
             atomic_positions.append([i  + j * np.cos(angle), j * np.sin(angle)])
 
+    atomic_positions = np.array(atomic_positions)
     atomic_positions = atomic_positions*a_111
 
-    atomic_positions = np.array(atomic_positions)
+    
     
     return atomic_positions
 
@@ -329,7 +330,7 @@ def shift_surface_coordinates(
 
     if dimension == 2:    
         shifted_positions = [[pos[0] - center[0], pos[1] - center[1]] for pos in atomic_positions]
-        
+
     else:
         shifted_positions = [[pos[0] - center[0], pos[1] - center[1], pos[2] - center[2]] for pos in atomic_positions]
 
@@ -353,7 +354,6 @@ def save_atomic_coordinates(
     if is_surface: 
         # Generate the filename for the surface
         filename = f'{element_symbol}({plane})_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
-        print("Tirana brucia")
 
     else: 
         # Generate the filename based on the configuration parameters
@@ -368,7 +368,8 @@ cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
 save_atomic_coordinates(cubic_positions)
 
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
-save_atomic_coordinates(surface_positions, is_surface = True)
+surface_positions_shifted = shift_surface_coordinates(surface_positions)
+save_atomic_coordinates(surface_positions_shifted, is_surface = True)
 # atomic_positions_111 = generate_111_surface_fcc(3,2)
 # x,y = zip(*atomic_positions_111)
 # plt.scatter(x, y)
