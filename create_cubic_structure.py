@@ -337,7 +337,8 @@ def shift_surface_coordinates(
     return shifted_positions
 
 def check_mirror_plane_symmetry(
-                            atomic_coordinates : np.ndarray
+                            atomic_coordinates : np.ndarray,
+                            decimal_places : int = 3
 ) -> bool:
     """
     Check for mirror plane symmetry in a set of atomic coordinates.
@@ -345,13 +346,14 @@ def check_mirror_plane_symmetry(
     Parameters
     ----------
     atomic_coordinates (np.ndarray): Array containing atomic coordinates where each row is (x, y).
+    decimal_places (int) : Number of decimal places to consider for coordinates comparison.
 
     Returns
     -------
     has_symmetry (bool): True if mirror plane symmetry is detected, False otherwise.
     """
     # Convert the atomic coordinates to a set for efficient searching
-    coordinates_set = set(map(tuple, atomic_coordinates))
+    coordinates_set = set(tuple(np.round(coord, decimal_places)) for coord in atomic_coordinates)
 
     # Check each atom for mirror image existence
     for atom in atomic_coordinates:
@@ -361,9 +363,9 @@ def check_mirror_plane_symmetry(
         mirror_atom_xy = (-x, -y)
 
         if (
-            tuple(mirror_atom_x) not in coordinates_set and
-            tuple(mirror_atom_y) not in coordinates_set and
-            tuple(mirror_atom_xy) not in coordinates_set
+            tuple(np.round(mirror_atom_x, decimal_places)) not in coordinates_set and
+            tuple(np.round(mirror_atom_y, decimal_places)) not in coordinates_set and
+            tuple(np.round(mirror_atom_xy, decimal_places)) not in coordinates_set
         ):
             return False
 
