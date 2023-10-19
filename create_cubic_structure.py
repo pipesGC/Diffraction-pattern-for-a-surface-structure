@@ -227,11 +227,11 @@ def generate_111_surface_sc(
 
     """
     atomic_positions = []
-    a_111 = a*np.sqrt(2)         # lattice parameter for the (111) surface 
+    # a_111 = a*np.sqrt(2)         # lattice parameter for the (111) surface 
 
     for j in range(Nb+1):
         for i in range(Na+1):
-            atomic_positions.append([i * a_111, j * a_111])
+            atomic_positions.append([i , j ])
 
     atomic_positions = np.array(atomic_positions)
     
@@ -278,16 +278,14 @@ def generate_111_surface_fcc(
 
     """
     atomic_positions = []
-    a_111 = a*np.sqrt(2)/2      # lattice parameter for the (111) surface 
+    # a_111 = a*np.sqrt(2)/2      # lattice parameter for the (111) surface 
     angle = np.sqrt(np.pi/3)     # 60°
     for j in range(Nb+1):
         for i in range(Na+1):
             atomic_positions.append([i  + j * np.cos(angle), j * np.sin(angle)])
 
     atomic_positions = np.array(atomic_positions)
-    atomic_positions = atomic_positions*a_111
-
-    
+    # atomic_positions = atomic_positions*a_111    
     
     return atomic_positions
 
@@ -457,7 +455,7 @@ def save_atomic_coordinates(
     """
     if is_surface: 
         # Generate the filename for the surface
-        filename = f'{element_symbol}({plane})_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
+        filename = f'{element_symbol}({plane})_{cubic_structure}_a{a}__Na{Na}_Nb{Nb}.txt'
 
     else: 
         # Generate the filename based on the configuration parameters
@@ -469,7 +467,7 @@ def save_atomic_coordinates(
 
 
 cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
-# save_atomic_coordinates(cubic_positions)
+save_atomic_coordinates(cubic_positions)
 
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
@@ -481,7 +479,7 @@ if has_symmetry:
 else:
     print("The set of atomic coordinates does not have a centered unit cell symmetry.")
 
-# save_atomic_coordinates(surface_positions_shifted, is_surface = True)
+save_atomic_coordinates(surface_positions_shifted, is_surface = True)
 # atomic_positions_111 = generate_111_surface_fcc(3,2)
 # x,y = zip(*atomic_positions_111)
 # plt.scatter(x, y)
