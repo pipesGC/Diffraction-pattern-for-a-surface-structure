@@ -458,6 +458,42 @@ def check_glide_plane_symmetry(
     """
     pass
 
+def get_symmetry_properties(
+                        atomic_coordinates : np.ndarray, 
+                        decimal_places : int = 3
+) -> dict:
+    """
+    Notes
+    -----
+    Check for various symmetry properties in a set of atomic coordinates and return the detected symmetries.
+
+    Parameters
+    ----------
+    atomic_coordinates (np.ndarray): Array containing atomic coordinates where each row is (x, y).
+    decimal_places (int): Number of decimal places to consider for coordinates comparison.
+
+    Returns
+    -------
+    symmetry_properties (dict): A dictionary containing detected symmetries (mirror_plane, rotation_axis, centered_unit_cell, glide_plane).
+    """
+
+    # dictionary containing the information regarding the symmetry properties of the surface structure
+
+    symmetry_properties = {
+        "mirror_plane": False,
+        "rotation_axis": False,
+        "centered_unit_cell": False,
+        "glide_plane": None,
+    }
+    
+    symmetry_properties["mirror_plane"] = check_mirror_plane_symmetry(atomic_coordinates, decimal_places)
+    symmetry_properties["rotation_axis"] = check_2fold_rotation_axis(atomic_coordinates, decimal_places)
+    symmetry_properties["centered_unit_cell"] = check_centered_unit_cell_symmetry(atomic_coordinates, decimal_places)
+
+    # TD add evaluation of the glide_plane
+
+    return symmetry_properties
+
 def save_atomic_coordinates(
                         coordinates : np.ndarray,
                         is_surface : bool = False
@@ -490,16 +526,9 @@ save_atomic_coordinates(cubic_positions)
 
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
-
-# centered unit cell
-has_symmetry = check_centered_unit_cell_symmetry(surface_positions_shifted, decimal_places=3)
-if has_symmetry:
-    print("The set of atomic coordinates has a centered unit cell symmetry.")
-else:
-    print("The set of atomic coordinates does not have a centered unit cell symmetry.")
-
 save_atomic_coordinates(surface_positions_shifted, is_surface = True)
-# atomic_positions_111 = generate_111_surface_fcc(3,2)
-# x,y = zip(*atomic_positions_111)
-# plt.scatter(x, y)
-# plt.show()
+
+# check symmetry properties
+symmetries = get_symmetry_properties(surface_positions_shifted)
+print(symmetries)
+
