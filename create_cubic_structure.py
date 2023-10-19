@@ -438,6 +438,25 @@ def check_centered_unit_cell_symmetry(
 
     return True
 
+def check_glide_plane_symmetry(
+                            atomic_coordinates : np.ndarray, 
+                            decimal_places : int = 3
+) -> bool:
+    """
+    Notes
+    -----
+    Check for ca glide plane symmetry in a set of atomic coordinates.
+
+    Parameters
+    ----------
+    atomic_coordinates (np.ndarray): Array containing atomic coordinates where each row is (x, y).
+    decimal_places (int): Number of decimal places to consider for coordinates comparison.
+
+    Returns
+    -------
+    has_symmetry (bool): True if glide plane symmetry is detected, False otherwise.
+    """
+    pass
 
 def save_atomic_coordinates(
                         coordinates : np.ndarray,
