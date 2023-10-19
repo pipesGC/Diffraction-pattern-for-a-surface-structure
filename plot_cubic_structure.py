@@ -29,6 +29,11 @@ Nz = int(Nz_string)
 # Extract information on the surface to visualize
 plane = config.get('surface', 'plane')
 
+Na_string = config.get('surface_repetitions', 'Na')
+Nb_string = config.get('surface_repetitions', 'Nb')
+Na = int(Na_string)
+Nb = int(Nb_string)
+
 def get_cubic_coordinates():
     """
     Notes
@@ -61,14 +66,14 @@ def get_surface_coordinates():
     surface_positions (np.ndarray) : 
     """
     # Check if the 'cubic_structure_positions.txt' file exists
-    filename = f'{element_symbol}({plane})_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
+    filename = f'{element_symbol}({plane})_{cubic_structure}_a{a}__Na{Na}_Nb{Nb}.txt'
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"Error: '{filename}' file not found. Run create_cubic_structure.py first.")
 
-    a_surface = a/2*np.sqrt(2)
+    #a_surface = a/2*np.sqrt(2)
     # Read atomic positions from the file
     surface_positions = np.loadtxt(filename)
-    surface_positions /= a_surface  # renormalize the cubic structure to the lattice parameter
+    #surface_positions /= a_surface  # renormalize the cubic structure to the lattice parameter
 
     return surface_positions
 
@@ -183,7 +188,7 @@ def plot_surface_structure(filename : str = None):
 
 
 # Call the functions
-# plot_cubic_structure()
+plot_cubic_structure()
 plot_surface_structure()
 
 # plotname = f'{element_symbol}_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.png'
