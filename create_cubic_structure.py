@@ -494,6 +494,41 @@ def get_symmetry_properties(
 
     return symmetry_properties
 
+def generate_reciprocal_lattice_parameter(
+                                        a : float,
+                                        b : float,
+                                        c : float = 0
+) -> [float, float, float]:
+    """
+    Notes
+    -----
+    This function evaluates the recirpocal lattice parameters
+
+    Parameters
+    ----------
+    a (float) : lattice parameter in the real space
+    b (float) : lattice parameter in the real space
+    c (float) : lattice parameter in the real space
+
+    Returns
+    -------
+    reciprocal_a (float) : lattice parameter in the reciprocal space
+    reciprocal_b (float) : lattice parameter in the reciprocal space
+    reciprocal_c (float) : lattice parameter in the reciprocal space
+    """
+
+    reciprocal_a = 2*np.pi/a
+    reciprocal_b = 2*np.pi/b
+
+    # evaluation of the 3rd reciprocal lattice: if it's a surface c=0 and reciprocal_c = 0
+    if c == 0 :
+        reciprocal_c = 0
+    else:
+        reciprocal_c = 2*np.pi/c        
+
+    return reciprocal_a, reciprocal_b, reciprocal_c
+
+
 def save_atomic_coordinates(
                         coordinates : np.ndarray,
                         is_surface : bool = False
@@ -528,7 +563,4 @@ surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
 save_atomic_coordinates(surface_positions_shifted, is_surface = True)
 
-# check symmetry properties
-symmetries = get_symmetry_properties(surface_positions_shifted)
-print(symmetries)
 
