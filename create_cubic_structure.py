@@ -494,11 +494,11 @@ def get_symmetry_properties(
 
     return symmetry_properties
 
-def generate_reciprocal_lattice_parameter(
+def generate_surface_reciprocal_lattice_parameter(
+                                        plane : str,
                                         a : float,
                                         b : float,
-                                        c : float = 0
-) -> [float, float, float]:
+) -> [float, float]:
     """
     Notes
     -----
@@ -506,6 +506,7 @@ def generate_reciprocal_lattice_parameter(
 
     Parameters
     ----------
+    plane (str) : surface selected for the diffraction pattern
     a (float) : lattice parameter in the real space
     b (float) : lattice parameter in the real space
     c (float) : lattice parameter in the real space
@@ -514,19 +515,37 @@ def generate_reciprocal_lattice_parameter(
     -------
     reciprocal_a (float) : lattice parameter in the reciprocal space
     reciprocal_b (float) : lattice parameter in the reciprocal space
-    reciprocal_c (float) : lattice parameter in the reciprocal space
     """
 
-    reciprocal_a = 2*np.pi/a
-    reciprocal_b = 2*np.pi/b
+    if plane == '001' or plane == '110':
+        reciprocal_a = 2*np.pi/a
+        reciprocal_b = 2*np.pi/b
 
-    # evaluation of the 3rd reciprocal lattice: if it's a surface c=0 and reciprocal_c = 0
-    if c == 0 :
-        reciprocal_c = 0
-    else:
-        reciprocal_c = 2*np.pi/c        
+    elif plane == '111':
+        reciprocal_a = 2*np.pi/a * 2/np.sqrt(3)
+        reciprocal_b = 2*np.pi/b * 2/np.sqrt(3)
+    return reciprocal_a, reciprocal_b
 
-    return reciprocal_a, reciprocal_b, reciprocal_c
+# def generate_diffraction_pattern(
+#                             structure : str,
+#                             plane : str
+# ) -> np.ndarray: 
+#     """
+#     Notes
+#     -----
+#     This function genrates the reciprocal surface atomic coordinates
+
+#     Parameters
+#     ----------
+#     structure (str) : type of cubic structure (sc, bcc or fcc)
+#     plane (str) : surface selected for the diffraction pattern
+#     """
+#     reciprocal_unit_cell = generate_surface_structure(structure, plane, 1,1)
+#     reciprocal_unit_cell_shifted = shift_surface_coordinates(reciprocal_unit_cell)
+#     symmetry_properties = get_symmetry_properties(reciprocal_unit_cell_shifted)
+
+
+
 
 
 def save_atomic_coordinates(
@@ -563,4 +582,7 @@ surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
 save_atomic_coordinates(surface_positions_shifted, is_surface = True)
 
-
+#check generation of the lattice parameter
+ar, br = generate_surface_reciprocal_lattice_parameter(plane, a, a)
+print(ar)
+print(br)
