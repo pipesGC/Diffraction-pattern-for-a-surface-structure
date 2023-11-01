@@ -279,7 +279,7 @@ def generate_111_surface_fcc(
     """
     atomic_positions = []
     # a_111 = a*np.sqrt(2)/2      # lattice parameter for the (111) surface 
-    angle = np.sqrt(np.pi/3)     # 60°
+    angle = np.pi/3   # 60°
     for j in range(Nb+1):
         for i in range(Na+1):
             atomic_positions.append([i  + j * np.cos(angle), j * np.sin(angle)])
@@ -526,26 +526,150 @@ def generate_surface_reciprocal_lattice_parameter(
         reciprocal_b = 2*np.pi/b * 2/np.sqrt(3)
     return reciprocal_a, reciprocal_b
 
-# def generate_diffraction_pattern(
-#                             structure : str,
-#                             plane : str
-# ) -> np.ndarray: 
-#     """
-#     Notes
-#     -----
-#     This function genrates the reciprocal surface atomic coordinates
+def generate_reciprocal_111_surface_sc(
+                          Na : int,
+                          Nb : int
+) -> np.ndarray:
+    """
+    Notes
+    -----
+    This function calculates the atomic positions of the (111) surface of a simple cubic structure
 
-#     Parameters
-#     ----------
-#     structure (str) : type of cubic structure (sc, bcc or fcc)
-#     plane (str) : surface selected for the diffraction pattern
-#     """
-#     reciprocal_unit_cell = generate_surface_structure(structure, plane, 1,1)
-#     reciprocal_unit_cell_shifted = shift_surface_coordinates(reciprocal_unit_cell)
-#     symmetry_properties = get_symmetry_properties(reciprocal_unit_cell_shifted)
+    Parameters
+    ----------
+    Na (int) : number of repetitions of the structure to display the a axis 
+    Nb (int) : number of repetitions of the structure to display the b axis
 
+    Returns
+    -------
+    atomic_positions (np.ndarray) : 2-dim array cointaining the atomic positions
 
+    """
+    atomic_positions = []
 
+    for j in range(Nb+1):
+        for i in range(Na+1):
+            atomic_positions.append([i , j ])
+
+    atomic_positions = np.array(atomic_positions)
+    
+    return atomic_positions
+    
+def generate_reciprocal_111_surface_bcc(
+                          Na : int,
+                          Nb : int
+) -> np.ndarray:
+    """
+    Notes
+    -----
+    This function calculates the atomic positions of the (111) surface of a body centered cubic structure
+
+    Parameters
+    ----------
+    Na (int) : number of repetitions of the structure to display the a axis 
+    Nb (int) : number of repetitions of the structure to display the b axis
+
+    Returns
+    -------
+    atomic_positions (np.ndarray) : 2-dim array cointaining the atomic positions
+
+    """
+    pass
+
+def generate_reciprocal_111_surface_fcc(
+                          Na : int,
+                          Nb : int
+) -> np.ndarray:
+    """
+    Notes
+    -----
+    This function calculates the atomic positions of the (111) surface of a face centered cubic structure
+
+    Parameters
+    ----------
+    Na (int) : number of repetitions of the structure to display the a axis 
+    Nb (int) : number of repetitions of the structure to display the b axis
+
+    Returns
+    -------
+    atomic_positions (np.ndarray) : 2-dim array cointaining the atomic positions
+
+    """
+    atomic_positions = [] 
+    angle = np.pi/3     # 60°
+    for i in range(Na+1):
+        for j in range(Nb+1):
+            atomic_positions.append([i * np.sin(angle), j + i*np.cos(angle)])
+
+    atomic_positions = np.array(atomic_positions)
+    # atomic_positions = atomic_positions*a_111    
+    
+    return atomic_positions
+
+def generate_reciprocal_surface_structure(
+                            structure : str,
+                            plane : str,
+                            Na : int,
+                            Nb : int
+):
+    """
+    Notes
+    -----
+    This function calls the right function to generate and return the reciprocal surface structure
+
+    Parameters
+    ----------
+    structure (str) : type of cubic structure (sc, bcc or fcc)
+    plane (str) : surface selected to be visualised
+    Na (int) : number of repetitions of the structure to display along 'a'
+    Nb (int) : number of repetitions of the structure to display along 'b'
+    """
+    if structure == "sc" and plane == '111':
+        return generate_reciprocal_111_surface_sc(Na, Nb)
+    elif structure == "bcc":
+        pass
+    elif structure == "fcc" and plane == '111':
+        return generate_reciprocal_111_surface_fcc(Na, Nb)
+    else:
+        raise ValueError("Invalid cubic_structure specified in config.ini")
+
+def calculate_intensity(Na, Nb):
+    """
+    Notes
+    -----
+    Calculate the intensity array based on the formula:
+    intensity[h][k] = (sin^2(pi*Nx*h)/sin^2(pi*h)) * (sin^2(pi*Ny*k)/sin^2(pi*k))
+
+    Parameters
+    ----------
+    Nx (int): Repetitions along the x-axis.
+    Ny (int): Repetitions along the y-axis.
+ 
+    Returns
+    -------
+    intensity (np.ndarray): 2D array containing the calculated intensities.
+    """
+    intensity = np.empty((Na+1, Nb+1))
+    
+    for h in range(0, Na+1):
+        for k in range(0, Nb+1):
+            
+            if h == 0:
+                
+                h_dependence_term = Nx**2   # divergency problem
+
+            else:
+                h_dependence_term = (np.sin(np.pi * Nx * h) / np.sin(np.pi * h)) ** 2
+
+            if k == 0:
+                k_dependence_term = Ny**2   # divergency problem
+            else:
+                k_dependence_term = (np.sin(np.pi * Ny * k) / np.sin(np.pi * k)) ** 2
+
+            intensity[h][k] = h_dependence_term * k_dependence_term
+
+    
+    return intensity
 
 
 def save_atomic_coordinates(
@@ -573,6 +697,20 @@ def save_atomic_coordinates(
     # Save the atomic positions to the generated filename
     np.savetxt(filename, coordinates)
 
+def save_intensity(
+                intensity : np.ndarray,
+):
+    """
+    Notes
+    -----
+    This function saves the intensity of the diffraction pattern
+
+    Parameters
+    ----------
+    intensity (np.ndarray) : array containing the intensity of the diffraction pattern
+    """
+    filename = f'intensity_{element_symbol}_{cubic_structure}_a{a}__Nx{Nx}_Ny{Ny}_Nz{Nz}.txt'
+    np.savetxt(filename, intensity)
 
 
 cubic_positions = generate_cubic_structure(cubic_structure, Nx, Ny, Nz)
@@ -580,9 +718,8 @@ save_atomic_coordinates(cubic_positions)
 
 surface_positions = generate_surface_structure(cubic_structure, plane, Na, Nb)
 surface_positions_shifted = shift_surface_coordinates(surface_positions)
-save_atomic_coordinates(surface_positions_shifted, is_surface = True)
+save_atomic_coordinates(surface_positions, is_surface = True)
 
 #check generation of the lattice parameter
-ar, br = generate_surface_reciprocal_lattice_parameter(plane, a, a)
-print(ar)
-print(br)
+intensity = calculate_intensity(Na, Nb)
+print(intensity)
